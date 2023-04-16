@@ -4,6 +4,8 @@ import { message } from "antd";
 import logo from "../../assets/png/logo-color.png";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/userService";
+import { hideLoading, showLoading } from "../../redux/loaderSlice";
+import { useDispatch } from "react-redux";
 
 function Register() {
   const firstName = useRef();
@@ -12,6 +14,7 @@ function Register() {
   const password = useRef();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // handle register user will call registerUser from service and handle user registration
   const handleRegister = async (e) => {
@@ -23,9 +26,9 @@ function Register() {
     };
 
     try {
-      console.log(firstName, lastName, email, password);
-      console.log(userInfo.password);
+      dispatch(showLoading());
       const response = await registerUser(userInfo);
+      dispatch(hideLoading());
       if (response.success) {
         // show message that uesr is registered
         message.success(response.message);
@@ -35,6 +38,7 @@ function Register() {
       }
     } catch (error) {
       // show error message
+      dispatch(hideLoading());
       message.error(error.message);
     }
   };

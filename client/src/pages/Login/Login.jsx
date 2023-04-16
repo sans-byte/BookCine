@@ -4,11 +4,14 @@ import logo from "../../assets/png/logo-color.png";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../services/userService";
 import { message } from "antd";
+import { hideLoading, showLoading } from "../../redux/loaderSlice";
+import { useDispatch } from "react-redux";
 
 function Login() {
   const email = useRef();
   const password = useRef();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleLogin = async (e) => {
     e.preventDefault();
     const user = {
@@ -16,7 +19,9 @@ function Login() {
       password: password.current.value,
     };
     try {
+      dispatch(showLoading())
       const response = await loginUser(user);
+      dispatch(hideLoading())
       if (response.success) {
         message.success(response.message);
         localStorage.setItem("token", response.data);
@@ -26,6 +31,7 @@ function Login() {
         message.error(response.message);
       }
     } catch (error) {
+      dispatch(hideLoading());
       message.error(error.message);
     }
   };
