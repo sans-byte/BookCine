@@ -6,8 +6,8 @@ const dbConfig = require("./congif/dbconfig")
 const userRoutes = require("./routes/userRoutes");
 
 // for api/users is hitting userRoutes will be used
-app.use("api/users", userRoutes);
+app.use("/api/users", userRoutes);
 
 
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 8080
 app.listen(port, ()=> console.log(`Server started on port ${port}`));

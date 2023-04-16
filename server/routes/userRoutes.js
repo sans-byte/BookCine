@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 // Post routes
 
@@ -21,8 +22,15 @@ router.post("/register", async (req, res) => {
       });
     }
 
+    if (req.body.password.length < 4)
+      return res.send({
+        message: "Password too short",
+        success: false,
+        statuscode: 400,
+      });
+
     // Encrypt the password
-    const salt = await bcrypt.salt(10);
+    const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
     req.body.password = hashedPassword;
 
@@ -60,34 +68,59 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    //validate user password 
-    const validatePassword = await bcrypt.compare(req.body.password, user.password);
+    //validate user password
+    const validatePassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
     if (!validatePassword) {
-        return res.send({
-          message: "Invalid password",
-          success: false,
-          statuscode: 400,
-        });
+      return res.send({
+        message: "Invalid password",
+        success: false,
+        statuscode: 400,
+      });
     }
-    // create a jwt and send it with data 
+    // create a jwt and send it with data
     // this jwt function will keep track of session timeout for a perticular user
-    const token = jwt.sign({userId : user._id},process.env.jwt_secret,{
-      expiresIn:"1h"
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
     });
 
     // Login the user
     res.send({
-        message:"User Login Success",
-        success: true,
-        statuscode: 200,
-        data: token,
-      });
-    
+      message: "User Login Success",
+      success: true,
+      statuscode: 200,
+      data: token,
+    });
   } catch (error) {
     res.send({
       message: error.message,
       success: false,
       statuscode: error.status,
+    });
+  }
+});
+
+// =================================================================================================================================
+// Protected routes (protected routes are for implementing autorisations)
+// we will protect the routes with the help of the middlewares
+// Get Routes
+// getting current user with the help of jwt token and authorizing
+router.get("/get-current-user", authMiddleware, async (req, res) => {
+  try {
+    // getting the user based on jwt token from the database
+    const user = await User.findById(req.body.userId).select("-password");
+    res.send({
+      success: true,
+      data: user,
+      statuscode: 200,
+      message: "User Fetched successfully",
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      message: error,
     });
   }
 });

@@ -1,7 +1,9 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import "./register.css";
+import { message } from "antd";
 import logo from "../../assets/png/logo-color.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { registerUser } from "../../services/userService";
 
 function Register() {
   const firstName = useRef();
@@ -9,11 +11,39 @@ function Register() {
   const email = useRef();
   const password = useRef();
 
+  const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  // handle register user will call registerUser from service and handle user registration
+  const handleRegister = async (e) => {
     e.preventDefault();
-    // console.log(firstName.current.value);
+    const userInfo = {
+      name: firstName.current.value + " " + lastName.current.value,
+      email: email.current.value,
+      password: password.current.value,
+    };
+
+    try {
+      console.log(firstName, lastName, email, password);
+      console.log(userInfo.password);
+      const response = await registerUser(userInfo);
+      if (response.success) {
+        // show message that uesr is registered
+        message.success(response.message);
+      } else {
+        // show error message
+        message.error(response.message);
+      }
+    } catch (error) {
+      // show error message
+      message.error(error.message);
+    }
   };
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <div className="row vw-100 vh-100">

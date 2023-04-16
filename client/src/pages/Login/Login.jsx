@@ -1,16 +1,40 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import "./login.css";
 import logo from "../../assets/png/logo-color.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from "../../services/userService";
+import { message } from "antd";
 
 function Login() {
   const email = useRef();
   const password = useRef();
-
-  const handleLogin = (e) => {
+  const navigate = useNavigate();
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // console.log(email.current.value);
+    const user = {
+      email: email.current.value,
+      password: password.current.value,
+    };
+    try {
+      const response = await loginUser(user);
+      if (response.success) {
+        message.success(response.message);
+        localStorage.setItem("token", response.data);
+        window.location.href = "/";
+        // navigate("/")
+      } else {
+        message.error(response.message);
+      }
+    } catch (error) {
+      message.error(error.message);
+    }
   };
+
+  useEffect(()=>{
+    if(localStorage.getItem("token")){
+      navigate("/");
+    }
+  },[])
   return (
     <div className="row vw-100 vh-100">
       <div className="col">
@@ -21,8 +45,7 @@ function Login() {
           <div className="d-flex mb-4 align-items-center">
             <img
               src={logo}
-              alt=""
-              srcset=""
+              alt="BookCine"
               style={{ height: "150px", width: "170px" }}
             />
             <div className="ms-3">
@@ -31,42 +54,40 @@ function Login() {
             </div>
           </div>
           <form onSubmit={handleLogin}>
-            <div class="mb-3">
-              <label for="email" class="form-label">
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label">
                 Email address / Phone
               </label>
               <input
                 type="email"
-                class="form-control"
+                className="form-control"
                 id="email"
                 name="email"
                 ref={email}
               />
-              <div id="" class="form-text text-danger d-none">
+              <div id="" className="form-text text-danger d-none">
                 Enter your email
               </div>
             </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">
+            <div className="mb-3">
+              <label htmlFor="password" className="form-label">
                 Password
               </label>
               <input
                 type="password"
-                class="form-control"
+                className="form-control"
                 id="password"
                 name="password"
                 ref={password}
               />
             </div>
-            <div class="mb-3 form-check">
-              <input type="checkbox" class="form-check-input" id="check" />
-              <label class="form-check-label" for="check">
+            <div className="mb-3 form-check">
+              <input type="checkbox" className="form-check-input" id="check" />
+              <label className="form-check-label" htmlFor="check">
                 Check me out
               </label>
             </div>
-            <button className="btn btn-dark w-100" type="submit">
-              Login
-            </button>
+            <button className="btn btn-dark w-100">Login</button>
             <p className="mt-2">
               Not a member? Join{" "}
               <span className="text-primary">
