@@ -1,11 +1,17 @@
 import React from "react";
 import Carousel from "../../components/GetCarousel";
+import Navbar from "../../components/Navbar";
 
 function Home() {
   return (
-    <div>
-      <Carousel/>
-    </div>
+    <>
+      <div>
+        <Navbar />
+        <div>
+          <Carousel />
+        </div>
+      </div>
+    </>
   );
 }
 

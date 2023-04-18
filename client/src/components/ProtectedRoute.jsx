@@ -17,12 +17,14 @@ function ProtectedRoute({ children }) {
       dispatch(showLoading());
       const response = await getCurrentUser();
       dispatch(hideLoading());
-
       if (response.success) {
         dispatch(setUser(response.data));
       } else {
-        message.error(response.response.data.message);
+        console.log(response);
+        message.error("Invalid Token");
         dispatch(setUser(null));
+        localStorage.removeItem("token");
+        navigate("/login");
       }
     } catch (error) {
       dispatch(hideLoading());
@@ -39,13 +41,7 @@ function ProtectedRoute({ children }) {
     }
   }, []);
 
-  return (
-    user && (
-      <div>
-        {children}
-      </div>
-    )
-  );
+  return user && <div>{children}</div>;
 }
 
 export default ProtectedRoute;

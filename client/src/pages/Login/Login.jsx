@@ -19,9 +19,9 @@ function Login() {
       password: password.current.value,
     };
     try {
-      dispatch(showLoading())
+      dispatch(showLoading());
       const response = await loginUser(user);
-      dispatch(hideLoading())
+      dispatch(hideLoading());
       if (response.success) {
         message.success(response.message);
         localStorage.setItem("token", response.data);
@@ -36,11 +36,11 @@ function Login() {
     }
   };
 
-  useEffect(()=>{
-    if(localStorage.getItem("token")){
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
       navigate("/");
     }
-  },[])
+  }, []);
   return (
     <div className="row vw-100 vh-100">
       <div className="col">

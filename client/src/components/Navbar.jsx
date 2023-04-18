@@ -1,22 +1,39 @@
 import React from "react";
 import { GiTicket } from "react-icons/gi";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const user = useSelector((state) => state.users);
-  // console.log(user?.user?.name);
+  const navigate = useNavigate();
+
+  const handleLogOut = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
+  const handleProfile = () => {
+    if (user.user.isAdmin) {
+      navigate("/admin");
+    } else {
+      navigate("/profile");
+    }
+  };
+
   return (
     <div className="">
       <nav className="navbar navbar-expand-lg navbar-light bg-danger">
         <div className="container-fluid">
           <div className="d-flex justify-content-center align-items-center">
-            <a
+            <div
               className="navbar-brand text-white"
-              href="#"
-              style={{ zIndex: 2 }}
+              onClick={() => {
+                navigate("/");
+              }}
+              style={{ zIndex: 2, cursor: "pointer" }}
             >
               BOOKCINE
-            </a>
+            </div>
             <GiTicket
               className="position-absolute fs-1"
               style={{ zIndex: 1 }}
@@ -54,42 +71,47 @@ function Navbar() {
                 </a>
               </li>
             </ul>
-            <div className=" mb-2 mb-lg-0" style={{marginRight:"5rem"}}>
-                {user ? (
-                  <div className="nav-item dropdown ">
-                    <a
-                      className="nav-link dropdown-toggle text-white"
-                      href="#"
-                      id="navbarDropdown"
-                      role="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      {user.user.name}
-                    </a>
-                    <ul
-                      className="dropdown-menu"
-                      aria-labelledby="navbarDropdown"
-                    >
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          Profile
-                        </a>
-                      </li>
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          Another action
-                        </a>
-                      </li>
-                      <li>
-                        <a className="dropdown-item bg-warning">logout</a>
-                      </li>
-                    </ul>
-                  </div>
-                ) : (
-                  <button className="btn btn-warning">login</button>
-                )}
-              </div>
+            <div className=" mb-2 mb-lg-0" style={{ marginRight: "5rem" }}>
+              {user.user ? (
+                <div className="nav-item dropdown ">
+                  <a
+                    className="nav-link dropdown-toggle text-white"
+                    href="#"
+                    id="navbarDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {user.user.name}
+                  </a>
+                  <ul
+                    className="dropdown-menu"
+                    aria-labelledby="navbarDropdown"
+                  >
+                    <li>
+                      <button className="dropdown-item" onClick={handleProfile}>
+                        Profile
+                      </button>
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="#">
+                        Another action
+                      </a>
+                    </li>
+                    <li>
+                      <button
+                        className="dropdown-item bg-warning"
+                        onClick={handleLogOut}
+                      >
+                        logout
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              ) : (
+                <button className="btn btn-warning">login</button>
+              )}
+            </div>
           </div>
         </div>
       </nav>
