@@ -83,7 +83,7 @@ router.post("/login", async (req, res) => {
     // create a jwt and send it with data
     // this jwt function will keep track of session timeout for a perticular user
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "1d",
     });
 
     // Login the user
@@ -120,7 +120,7 @@ router.get("/get-current-user", authMiddleware, async (req, res) => {
   } catch (error) {
     res.send({
       success: false,
-      message: error,
+      message: error.message,
     });
   }
 });
