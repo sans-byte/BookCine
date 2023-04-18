@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { message } from "antd";
 import { hideLoading, showLoading } from "../../redux/loaderSlice";
-import { addMovie } from "../../services/movieService";
+import { addMovie, updateMovie } from "../../services/movieService";
+import moment from "moment";
 
 function MoviesForm({
   selectedMovie,
@@ -10,6 +11,7 @@ function MoviesForm({
   showMoviesForm,
   setShowMoviesForm,
   formType,
+  getData,
 }) {
   const handleCancel = (e) => {
     e.preventDefault();
@@ -37,8 +39,11 @@ function MoviesForm({
       movieDescription.current.value = selectedMovie.movieDescription;
       movieLanguage.current.value = selectedMovie.movieLanguage;
       movieGenre.current.value = selectedMovie.movieGenre;
-      movieReleaseDate.current.value = selectedMovie.movieReleaseDate;
-      movieDuration.current.value = selectedMovie.movieDuration;
+      //convrting the date format here because html date picker will take the Date in YYYY-MM-DD only
+      (movieReleaseDate.current.value = moment(
+        selectedMovie.movieReleaseDate
+      ).format("YYYY-MM-DD")),
+        (movieDuration.current.value = selectedMovie.movieDuration);
       moviePosterURL.current.value = selectedMovie.moviePosterURL;
       movieTrailerURL.current.value = selectedMovie.movieTrailerURL;
       setPosterURL(selectedMovie.moviePosterURL);
@@ -64,11 +69,14 @@ function MoviesForm({
       if (formType == "add") {
         response = await addMovie(movieData);
       } else {
-        // Here will come the logic for edit movie
+        // edit movie logic
+        response = await updateMovie({ ...movieData, _id: selectedMovie._id });
       }
       if (response.success) {
-        // setShowMoviesForm(false);
         message.success(response.message);
+        getData();
+        setShowMoviesForm(false);
+        setSelectedMovie(null);
       } else {
         message.error(response.message);
       }
@@ -94,7 +102,6 @@ function MoviesForm({
               className="form-control"
               placeholder="Enter Name"
               ref={movieName}
-              value={"something"}
               required
             />
           </div>

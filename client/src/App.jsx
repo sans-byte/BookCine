@@ -17,7 +17,11 @@ function App() {
       {loading && (
         <div
           className="d-flex justify-content-center align-items-center position-fixed"
-          style={{ inset: 0, background: "rgba(255,255,255,0.9)" }}
+          style={{
+            inset: 0,
+            background: "rgba(255,255,255,0.9)",
+            zIndex: "999",
+          }}
         >
           <div
             className="spinner-grow position-absolute text-danger"

@@ -3,7 +3,7 @@ import MoviesForm from "./MoviesForm";
 import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
 import { Table, message } from "antd";
 import moment from "moment";
-import { getAllMovies } from "../../services/movieService";
+import { deleteMovie, getAllMovies } from "../../services/movieService";
 import { hideLoading, showLoading } from "../../redux/loaderSlice";
 import { useDispatch } from "react-redux";
 
@@ -13,13 +13,30 @@ function MoviesList() {
   const [selectedMovie, setSelectedMovie] = useState();
   const [formType, setFormType] = useState();
 
-  const handleShowAddMoviesForm = () => {
+  const handleAddMoviesForm = () => {
+    setFormType("add");
     setShowMoviesForm(true);
   };
   const dispatch = useDispatch();
 
-  // fetching all the movies from the database
+  const handleMovieDelete = async (movieId) => {
+    try {
+      dispatch(showLoading());
+      const response = await deleteMovie({ movieId });
+      if (response.success) {
+        message.success(response.message);
+        getAllMoviesData();
+      } else {
+        message.error(response.message);
+      }
+      dispatch(hideLoading());
+    } catch (err) {
+      dispatch(hideLoading());
+      message.error(err.message);
+    }
+  };
 
+  // fetching all the movies from the database
   const getAllMoviesData = async () => {
     try {
       dispatch(showLoading());
@@ -46,6 +63,17 @@ function MoviesList() {
   // Columns data for the antd component of the table
   const columns = [
     {
+      title: "Poster",
+      dataIndex: "moivePosterURL",
+      key: "posterURL",
+      render: (text, record) => (
+        <img
+          src={record.moviePosterURL}
+          style={{ width: "100px", height: "100px", objectFit: "contain" }}
+        />
+      ),
+    },
+    {
       title: "Name",
       dataIndex: "movieName",
       key: "name",
@@ -70,7 +98,8 @@ function MoviesList() {
       dataIndex: "movieReleaseDate",
       key: "releaseDate",
       render: (text, record) => {
-        return moment(record.releaseDate).format("DD-MM-YYYY");
+        console.log(record);
+        return moment(record.movieReleaseDate).format("DD-MM-YYYY");
       },
     },
     {
@@ -90,7 +119,13 @@ function MoviesList() {
             >
               <FaPencilAlt />
             </button>
-            <button className="btn btn-sm text-danger">
+            <button
+              className="btn btn-sm text-danger"
+              onClick={(e) => {
+                console.log(record._id);
+                handleMovieDelete(record._id);
+              }}
+            >
               <FaTrashAlt />
             </button>
           </div>
@@ -109,13 +144,15 @@ function MoviesList() {
             setSelectedMovie={setSelectedMovie}
             selectedMovie={selectedMovie}
             formType={formType}
+            // It will run internally so that we can get the updated data when we close the form
+            getData={getAllMoviesData}
           />
         ) : (
           <div>
             <div className="text-end">
               <button
                 className="btn btn-sm btn-primary"
-                onClick={handleShowAddMoviesForm}
+                onClick={handleAddMoviesForm}
               >
                 Add Movies
               </button>
