@@ -1,12 +1,13 @@
 const router = require("express").Router();
 const Movie = require("../models/movieModel");
+const authmiddleware = require("../middlewares/authMiddleware");
 
 // Get Routes
 // =================================================================
 // This route is handling getting all the movies form the database
-router.get("/get-all-movies", async (req, res) => {
+router.get("/get-all-movies", authmiddleware, async (req, res) => {
   try {
-    const response = await Movie.find();
+    const response = await Movie.find().sort({ createdAt: "-1" });
     res.send({
       success: true,
       message: "Movies fetched successfully",
@@ -26,7 +27,7 @@ router.get("/get-all-movies", async (req, res) => {
 // Post Routes
 // =================================================================
 //  This route is handling adding a movie to the database
-router.post("/add-movie", async (req, res) => {
+router.post("/add-movie", authmiddleware, async (req, res) => {
   try {
     const newMovie = new Movie(req.body);
     await newMovie.save();
@@ -45,7 +46,7 @@ router.post("/add-movie", async (req, res) => {
 });
 
 // This route is handling the delete a single movie from the database
-router.post("/delete-movie", async (req, res) => {
+router.post("/delete-movie", authmiddleware, async (req, res) => {
   try {
     await Movie.findByIdAndDelete(req.body.movieId);
     console.log(req.body);
@@ -68,7 +69,7 @@ router.post("/delete-movie", async (req, res) => {
 // Update routes
 // =================================================================
 // This route is handling updating a movie in the database
-router.put("/update-movie", async (req, res) => {
+router.put("/update-movie", authmiddleware, async (req, res) => {
   try {
     const response = await Movie.findByIdAndUpdate(req.body._id, req.body);
     res.send({

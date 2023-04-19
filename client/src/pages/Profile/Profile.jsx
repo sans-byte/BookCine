@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "../../components/Navbar";
-import { Button, Menu } from "antd";
+import { Button, Menu, Drawer } from "antd";
 import { useState } from "react";
 import {
   GiTicket,
@@ -8,7 +8,10 @@ import {
   GiTakeMyMoney,
   GiChatBubble,
   GiOpenGate,
+  GiHamburgerMenu,
 } from "react-icons/gi";
+import Bookings from "./Bookings";
+import TheaterListUser from "./TheatersListUser";
 
 function getItem(label, key, icon, danger, children, type) {
   return {
@@ -24,8 +27,6 @@ const items = [
   getItem("Bookings", "1", <GiTicket />),
   getItem("Transactions", "2", <GiTakeMyMoney />),
   getItem("Help and support", "3", <GiChatBubble />),
-  getItem("Theater", "4", <GiTheaterCurtains />),
-  getItem("Logout", "5", <GiOpenGate />),
 ];
 
 function Profile() {
@@ -33,34 +34,97 @@ function Profile() {
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
+
+  const [open, setOpen] = useState(false);
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
+
+  const [pageItem, setPageItem] = useState("1");
+
   return (
-    <div className="" style={{ height: "100vh" }}>
-      <div className="d-block h-10">
-        <Navbar />
-      </div>
-      <div className="row w-100">
-        <div className="col-3">
-          <div className="text-center p-4 bg-dark text-white">
-            <h3> Hey there! </h3>
-          </div>
+    <>
+      {
+        //=====================================================
+        // Drawer Container Code
+        <Drawer
+          title={
+            <div className="text-start text-white ">
+              <h3 className="fw-bolder">Hey!</h3>
+            </div>
+          }
+          placement="right"
+          onClose={onClose}
+          open={open}
+          className="bg-danger"
+          bodyStyle={{ padding: 0, textAlign: "start" }}
+          closeIcon={<div className="d-none"></div>}
+          footer={
+            <div className="">
+              <div className="w-100">
+                <button
+                  className="w-100 btn-sm btn btn-danger"
+                  onClick={() => {
+                    setPageItem("4");
+                    setOpen(false);
+                  }}
+                >
+                  Theater
+                </button>
+              </div>
+            </div>
+          }
+        >
           <Menu
             style={{
               width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              alignItems: "center",
+              height: "100%",
             }}
             mode="vertical"
             defaultSelectedKeys={["1"]}
             expandIcon
             items={items}
-            theme="light"
+            theme="dark"
+            onClick={(item) => {
+              setPageItem(item.key);
+              setOpen(false);
+            }}
           />
+        </Drawer>
+
+        //=====================================================
+      }
+      <div className="" style={{ height: "100vh" }}>
+        <div className="d-block h-10">
+          <Navbar />
         </div>
-        <div className="col-9"></div>
+        <div className="bg-dark p-2 mb-2">
+          <Button
+            type="primary"
+            className="p-3 d-flex justify-content-center align-items-center "
+            onClick={showDrawer}
+          >
+            <GiHamburgerMenu />
+            <span className="ms-2"> Menu </span>
+          </Button>
+        </div>
+
+        <div className="">
+          {pageItem == "1" ? (
+            <Bookings />
+          ) : pageItem == "4" ? (
+            <TheaterListUser />
+          ) : (
+            ""
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
