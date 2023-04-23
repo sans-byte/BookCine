@@ -9,12 +9,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { Table, message } from "antd";
 import { hideLoading, showLoading } from "../../redux/loaderSlice";
 import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
+import Shows from "./Shows/ShowsForm";
+import ShowsForm from "./Shows/ShowsForm";
 
 function TheatersListUser() {
   const [showTheaterForm, setShowTheaterForm] = useState(false);
   const [selectedTheater, setSelectedTheater] = useState(null);
   const [formType, setFormType] = useState("add");
   const [theaters, setTheaters] = useState([]);
+  const [showShowsForm, setShowShowsForm] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -136,6 +139,17 @@ function TheatersListUser() {
             >
               <FaTrashAlt />
             </button>
+            {record.isActive && (
+              <button
+                className="btn btn-sm btn-success text-white"
+                onClick={() => {
+                  setSelectedTheater(record);
+                  setShowShowsForm(true);
+                }}
+              >
+                Shows
+              </button>
+            )}
           </div>
         );
       },
@@ -169,6 +183,13 @@ function TheatersListUser() {
           getAllTheatersByOwnerData={getAllTheatersByOwnerData}
         />
       </div>
+      {showShowsForm && (
+        <ShowsForm
+          showShowsForm={showShowsForm}
+          setShowShowsForm={setShowShowsForm}
+          selectedTheater={selectedTheater}
+        />
+      )}
     </div>
   );
 }

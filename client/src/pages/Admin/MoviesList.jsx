@@ -158,7 +158,11 @@ function MoviesList() {
               </button>
             </div>
             <div className="mt-2">
-              <Table dataSource={movies} columns={columns} />
+              <Table
+                dataSource={movies}
+                columns={columns}
+                pagination={{ pageSize: 2 }}
+              />
             </div>
           </div>
         )}

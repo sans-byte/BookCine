@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/Navbar/Navbar";
 import { Button, Menu, Drawer } from "antd";
 import { useState } from "react";
 import {
@@ -30,11 +30,6 @@ const items = [
 ];
 
 function Profile() {
-  const [collapsed, setCollapsed] = useState(false);
-  const toggleCollapsed = () => {
-    setCollapsed(!collapsed);
-  };
-
   const [open, setOpen] = useState(false);
 
   const showDrawer = () => {

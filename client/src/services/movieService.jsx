@@ -10,6 +10,19 @@ export const getAllMovies = async () => {
   }
 };
 
+// Fetching the movie form the database based on the ID provided in params as payload here
+export const getMovieById = async (payload) => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/movies/get-movie-by-id/${payload}`,
+      payload
+    );
+    return response.data;
+  } catch (error) {
+    return response.error;
+  }
+};
+
 // Post
 export const addMovie = async (payload) => {
   try {

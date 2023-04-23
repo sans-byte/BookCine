@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/Navbar/Navbar";
 import { Tabs } from "antd";
 import MoviesList from "./MoviesList";
 import TheatersList from "./TheatersList";

@@ -6,9 +6,11 @@ import Login from "./pages/Login/Login";
 import Home from "./pages/Home/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useSelector } from "react-redux";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Navbar/Navbar";
 import Profile from "./pages/Profile/Profile";
 import Admin from "./pages/Admin/Admin";
+import TheatersForMovie from "./pages/Users/TheatersForMovie";
+import BookShow from "./pages/Bookshow/BookShow";
 
 function App() {
   const { loading } = useSelector((state) => state.loaders);
@@ -54,6 +56,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Admin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/movie/:id"
+            element={
+              <ProtectedRoute>
+                <TheatersForMovie />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/bookshow/:id"
+            element={
+              <ProtectedRoute>
+                <BookShow />
               </ProtectedRoute>
             }
           />

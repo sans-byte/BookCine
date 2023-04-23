@@ -22,6 +22,20 @@ export const getAllTheatersByOwner = async (payload) => {
   }
 };
 
+//get all theaters by movie and date;
+
+export const getAllTheatersByMovieAndDate = async (payload) => {
+  try {
+    const response = await axiosInstance.post(
+      "/api/theater/get-all-theaters-by-movie-and-date",
+      payload
+    );
+    return response.data;
+  } catch (error) {
+    return error.message;
+  }
+};
+
 // post
 
 export const addTheater = async (payload) => {

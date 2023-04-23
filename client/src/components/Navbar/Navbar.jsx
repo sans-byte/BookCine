@@ -1,11 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GiTicket } from "react-icons/gi";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { getAllMovies } from "../../services/movieService";
+import { message } from "antd";
+import { hideLoading, showLoading } from "../../redux/loaderSlice";
+import "./Navbar.css";
 
 function Navbar() {
   const user = useSelector((state) => state.users);
   const navigate = useNavigate();
+
+  const [movies, setMovies] = useState([]);
+  const [searchTerm, setSearchName] = useState();
+  const dispatch = useDispatch();
+
+  // fetching the data about the movie currently in database
+  const getAllMoviesData = async () => {
+    try {
+      dispatch(showLoading());
+      const response = await getAllMovies();
+      if (response.success) {
+        setMovies(response.data);
+      } else {
+        message.error(response.message);
+      }
+      dispatch(hideLoading());
+    } catch (error) {
+      dispatch(hideLoading());
+      message.error(error.message);
+    }
+  };
+
+  // on navbar load we need to fetch the data of all the movies already present
+
+  useEffect(() => {
+    getAllMoviesData();
+  }, []);
 
   const handleLogOut = () => {
     localStorage.removeItem("token");
@@ -51,22 +82,46 @@ function Navbar() {
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <form className="d-flex w-50">
-              <input
-                className="form-control w-100"
-                type="search"
-                placeholder="Search.."
-                aria-label="Search"
-              />
-            </form>
+            <div className="position-relative w-50">
+              <form className="d-flex w-100">
+                <input
+                  className="form-control w-100"
+                  type="search"
+                  placeholder="Search.."
+                  aria-label="Search"
+                  onChange={(e) => setSearchName(e.target.value)}
+                />
+              </form>
+              {/* Dropdown menu when searched keywords */}
+              {searchTerm && (
+                <div className="p-2 position-absolute text-white w-100 dropdown-search bg-dark">
+                  {movies
+                    .filter((movie) => {
+                      //show only those movie whose name contains the searched keyword
+                      const searchValue = searchTerm.toLowerCase();
+                      const movieName = movie.movieName.toLowerCase();
+
+                      return movieName.includes(searchValue);
+                    })
+                    .map((movie) => (
+                      <div
+                        className="p-1 w-100 border-bottom border-white"
+                        onChange={() => {}}
+                      >
+                        {movie.movieName}
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
             <ul className="navbar-nav mb-2 mb-lg-0 w-50">
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">
+                <Link to="/" className="nav-link active" aria-current="page">
                   Home
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                <a className="nav-link" href="/#movies_section">
                   Movies
                 </a>
               </li>

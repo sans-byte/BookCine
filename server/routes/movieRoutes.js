@@ -22,6 +22,24 @@ router.get("/get-all-movies", authmiddleware, async (req, res) => {
     });
   }
 });
+
+router.get("/get-movie-by-id/:id", authmiddleware, async (req, res) => {
+  try {
+    const response = await Movie.findById(req.params.id);
+    res.send({
+      success: true,
+      message: "Movie fetched successfully",
+      statuscode: 200,
+      data: response,
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      message: error.message,
+      statuscode: 500,
+    });
+  }
+});
 // =================================================================
 
 // Post Routes
@@ -49,7 +67,6 @@ router.post("/add-movie", authmiddleware, async (req, res) => {
 router.post("/delete-movie", authmiddleware, async (req, res) => {
   try {
     await Movie.findByIdAndDelete(req.body.movieId);
-    console.log(req.body);
     res.send({
       success: true,
       message: "Movie Deleted successfully",

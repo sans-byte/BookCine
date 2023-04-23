@@ -1,0 +1,8 @@
+.dropdown-search {
+  opacity: 0.8;
+  z-index: 999;
+}
+.dropdown-search :hover {
+  opacity: 1;
+  cursor:pointer
+}
