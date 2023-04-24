@@ -32,6 +32,7 @@ function Register() {
       if (response.success) {
         // show message that uesr is registered
         message.success(response.message);
+        navigate("/login");
       } else {
         // show error message
         message.error(response.message);
